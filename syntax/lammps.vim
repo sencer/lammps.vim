@@ -10,6 +10,8 @@ endif
 
 let b:current_syntax = "lammps"
 
+set commentstring=#\ %s
+
 syn clear
 
 syn keyword	lammpsOutput	log write_restart restart dump undump thermo thermo_modify thermo_style print 
