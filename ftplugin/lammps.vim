@@ -16,7 +16,7 @@ if !exists('g:lmpdoc_path')
 endif
 
 if !exists('g:lmpdoc_cmd')
-    let g:lmpdoc_cmd = 'tail -n +10 '. g:lmpdoc_path . ''
+    let g:lmpdoc_cmd = 'tail -n +13 '. g:lmpdoc_path . ''
 endif
 
 if !exists('g:lmpdoc_open_cmd')
@@ -235,6 +235,9 @@ let b:lmpdoc_map = {
       \ "fix msst": "fix_msst",
       \ "fix neb": "fix_neb",
       \ "fix nh": "fix_nh",
+      \ "fix nvt": "fix_nh",
+      \ "fix npt": "fix_nh",
+      \ "fix nph": "fix_nh",
       \ "fix nh/eff": "fix_nh_eff",
       \ "fix nph/asphere": "fix_nph_asphere",
       \ "fix nph/sphere": "fix_nph_sphere",
@@ -272,7 +275,7 @@ let b:lmpdoc_map = {
       \ "fix qmmm": "fix_qmmm",
       \ "fix qtb": "fix_qtb",
       \ "fix reax/bonds": "fix_reax_bonds",
-      \ "fix reaxc/species": "fix_reaxc_species",
+      \ "fix reax/c/species": "fix_reaxc_species",
       \ "fix recenter": "fix_recenter",
       \ "fix restrain": "fix_restrain",
       \ "fix rigid": "fix_rigid",
@@ -510,14 +513,17 @@ function! s:GetWindowLine(value)
   endif
 endfunction
 
-" Args: name: lookup; type: 0: search, 1: lookup
 function! s:ShowLMPDoc(word, line)
-  " if a:name == ''
-  "     return
-  " endif
-  let s:line = b:lmpdoc_map[substitute(matchstr(getline("."), '\(\S\+\s\+\)\?'.a:word), '\s\+', ' ', 'g')]
-  " normal E
-  " let s:line = getline(a:line)[:col(".")-1]
+
+  let s:line = getline(".")
+
+  if s:line =~# 'fix\|compute'
+    let s:tmp  = split(s:line)
+    echom s:tmp[0] . ' ' . s:tmp[3]
+    let s:line = b:lmpdoc_map[s:tmp[0] . ' ' . s:tmp[3]]
+  else
+    let s:line = b:lmpdoc_map[substitute(matchstr(s:line, '\(\S\+\s\+\)\?'.a:word), '\s\+', ' ', 'g')]
+  endif
 
   if g:lmpdoc_open_cmd == 'split'
     if exists('g:lmpdoc_window_lines')
